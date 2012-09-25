@@ -1,0 +1,12 @@
+@attribute
+outlook {sunny, overcast, rain}
+temperature{hot, mild, cold}
+play{yes, no}
+
+@data
+sunny, hot, no
+overcast, mild, yes
+rain, cold, no
+
+@test
+sunny, cold
