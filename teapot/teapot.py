@@ -8,10 +8,15 @@ TEST_FILE = 'tests/teapot.txt'
 WINDOW_WIDTH = 1300
 WINDOW_HEIGHT = 800
 
+#used to compare floats for equality
 DELTA = 0.000001
 
+#After all segments of the triangles reach this size, we stop splitting it
+BOUND = 5
+
 def read_file(file):
-    """Read 3D-model from the given file and returns it as a list of triangles"""
+    """Read 3D-model from the given file and return it as a list of triangles
+       Each triangle is treated as a tuple of three points."""
 
     triangles = []
 
@@ -22,10 +27,9 @@ def read_file(file):
             for word in str:
                 number = word.strip("{}()\n\r\"")
                 raw_data.append(float(number))
-            point1 = classes.point(raw_data[0],raw_data[1])
-            point2 = classes.point(raw_data[2],raw_data[3])
-            point3 = classes.point(raw_data[4],raw_data[5])
-            triangles.append((point1, point2, point3))
+            data = tuple([classes.point(raw_data[index], raw_data[index+1])
+                          for index, _ in enumerate(raw_data) if index % 2 == 0])
+            triangles.append(data)
 
     return triangles
 
@@ -68,14 +72,19 @@ def model_boundaries():
 
     return classes.model_boundaries(min_x,max_x,min_y,max_y, WINDOW_WIDTH, WINDOW_HEIGHT)
 
-#TODO make it work with arbitrary list
-def contains_equal_values(value1, value2, value3):
+
+def contains_equal_values(values_list):
     """Return True if at least two out of supplied values are equal, false otherwise,
        is needed to detect whether a triangle is placed with horizontal/vertical lines"""
 
-    if math.fabs(value1-value2) < DELTA or math.fabs(value2-value3) < DELTA or math.fabs(value1-value3) < DELTA:
-        return True
+    for outer_index, outer_item in enumerate(values_list):
+        for inner_index, inner_item in enumerate(values_list[outer_index:]):
+            if (inner_index != 0 and
+                math.fabs(outer_item-inner_item) < DELTA):
+                return True
+
     return False
+
 
 def distance(point1, point2):
     """Distance formula to determine length of a line segment between two points"""
@@ -84,45 +93,52 @@ def distance(point1, point2):
 def is_triangle_small(triangle):
     """Return True if every side of a given triangle is less than bound"""
 
-    bound = 1
-
-    if ((distance(triangle[0], triangle[1]) < bound) and
-        (distance(triangle[0], triangle[2]) < bound)and
-        (distance(triangle[1], triangle[2]) < bound)):
+    if ((distance(triangle[0], triangle[1]) < BOUND) and
+        (distance(triangle[0], triangle[2]) < BOUND)and
+        (distance(triangle[1], triangle[2]) < BOUND)):
         return True
 
     return False
 
-def get_medium_point(triangle, index):
-    min_val = min(triangle[0].get()[index], triangle[1].get()[index], triangle[2].get()[index])
-    max_val = max(triangle[0].get()[index], triangle[1].get()[index], triangle[2].get()[index])
+def get_medium_point(triangle, coordinate):
+    """Given a trianlge, return a point with average value in the given coordinate (0 for x, 1 for y)"""
+    min_val = min([point.get()[coordinate] for point in triangle])
+    max_val = max([point.get()[coordinate] for point in triangle])
 
     for point in triangle:
-        if min_val < point.get()[index] < max_val:
+        if min_val < point.get()[coordinate] < max_val:
             return point
 
 
-def line_equation(point1, point2, medium_point, index):
-    if index == 1:
-        comp_index = 0
-    else:
-        comp_index = 1
+def line_equation(point1, point2, medium_point, coordinate):
+    """Given ends of the line segment and a value of a given coordinate,
+       find a value of second coordinate that lies at the segment
+       using the line equation.
 
-    value = ((point2.get()[index] - point1.get()[index]) /
-            (point2.get()[comp_index] - point1.get()[comp_index]) *
-            (medium_point.get()[comp_index] - point1.get()[comp_index]) + point1.get()[index])
-    comp_value = medium_point.get()[comp_index]
+       point1, point2 - segment ends coordinates
+       medium_point - point to take first value of missing point
+       coordinate - known coordinate for a missing point (0 for x, 1 for y)"""
 
-    if index == 0:
-        return classes.point(value, comp_value)
+    if coordinate:
+        comp_coordinate = 0
     else:
+        comp_coordinate = 1
+
+    value = ((point2.get()[coordinate] - point1.get()[coordinate]) /
+            (point2.get()[comp_coordinate] - point1.get()[comp_coordinate]) *
+            (medium_point.get()[comp_coordinate] - point1.get()[comp_coordinate]) + point1.get()[coordinate])
+    comp_value = medium_point.get()[comp_coordinate]
+
+    if coordinate:
         return classes.point(comp_value, value)
+    else:
+        return classes.point(value, comp_value)
 
 def render_triangle(triangle):
-    """Splits the triangles to get right triangles and renders them"""
+    """Splits the triangle into right triangles and renders them"""
 
-    contains_horizontal = contains_equal_values(triangle[0].get_y(),triangle[1].get_y(),triangle[2].get_y())
-    contains_vertical   = contains_equal_values(triangle[0].get_x(),triangle[1].get_x(),triangle[2].get_x())
+    contains_horizontal = contains_equal_values([point.get_y() for point in triangle])
+    contains_vertical   = contains_equal_values([point.get_x() for point in triangle])
 
     #draw the triangle if it is right and/or small
     if (contains_horizontal and contains_vertical) or is_triangle_small(triangle):
