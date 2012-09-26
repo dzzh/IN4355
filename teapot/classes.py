@@ -26,3 +26,22 @@ class model_boundaries:
 
     def shift_y(self):
         return self.segment_center(self.min_y, self.max_y) * self.scale_factor()
+
+class point:
+    def __init__(self, x, y):
+        self.data = (x, y)
+
+    def __eq__(self, other):
+        return self.__dict__ == other.__dict__
+
+    def __str__(self):
+        return '(' + str(self.data[0]) + ', ' + str(self.data[1]) + ')'
+
+    def get(self):
+        return self.data
+
+    def get_x(self):
+        return self.data[0]
+
+    def get_y(self):
+        return self.data[1]
