@@ -13,7 +13,7 @@ class feature:
     def is_continuous(self):
         """Return True if the feature has only continuous instances, false otherwise.
            Is needed because probabilities are computed differently for floats and strings"""
-        return reduce(lambda x,y: type(x) is float and type(y) is float, self.instances)
+        return reduce(lambda x,y: type(x) is float or type(y) is float, self.instances)
 
     def mean(self):
         """Return mean for the available instances, works only for continuous features"""
