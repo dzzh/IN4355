@@ -21,7 +21,7 @@ def clear_data(word):
 def num_features():
     """Return number of attributes used for classification.
        We assume that all records have all the attributes filled in"""
-    return len(training_set[0])-1
+    return len(training_set[0]) - 1
 
 def read_file(file):
     """Read training data into memory"""
@@ -97,6 +97,8 @@ if __name__ == '__main__':
 
     for instance in training_set:
         classifier.train(instance)
+
+    classifier.finish_training()
 
     for instance in testing_set:
         classifier.classify(instance)

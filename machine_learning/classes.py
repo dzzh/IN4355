@@ -61,7 +61,7 @@ class clazz:
         self.num_matches = 0
         self.features = list()
         self.value = value
-        for _ in range(1,num_features):
+        for _ in range(0,num_features):
             self.features.append(feature())
 
     def add_match(self, instances):

@@ -24,8 +24,11 @@ class knn:
 
     def normalize_instance(self, instance):
         normalized_instance = list()
-        for index,elem in enumerate(instance):
+        for index,elem in enumerate(instance[:-1]):
             if type(elem) is float:
+                # print 'index: ' + str(index)
+                # print 'instance: ' + str(instance)
+                # print 'means: ' + str(self.means)
                 normalized_instance.append((elem - self.means[index])/self.stdevs[index])
             else:
                 normalized_instance.append(elem)
@@ -33,7 +36,7 @@ class knn:
 
     def finish_training(self):
         for feature in self.statistics.features:
-            if feature.is_continuous():
+            if feature.is_continuous():                
                 self.means.append(feature.mean())
                 self.stdevs.append(feature.standard_deviation())
             else:
@@ -53,7 +56,7 @@ class knn:
 
     def euclidean_distance(self, i1, i2):
         d = 0
-        for index,item in i1[0:-1]:
+        for index,item in enumerate(i1[0:-1]):
              d += self.squared_scalar_distance(i1[index],i2[index])
         return math.sqrt(d)
 
@@ -61,15 +64,15 @@ class knn:
         self.neighbors = list()
 
     def max_neighbor_distance(self):
-        return max([n.distance for n in neighbors])
+        return max([n.distance for n in self.neighbors])
 
     def replace_far_neighbor(self, neighbor):
-        if len(self.neighbors) < k:
+        if len(self.neighbors) < self.k:
             self.neighbors.append(neighbor)
         else:
             index = 0
             for i,n in enumerate(self.neighbors):
-                if self.max_neighbor_distance() - n < DELTA:
+                if self.max_neighbor_distance() - n.distance < DELTA:
                     index = i
             self.neighbors[index] = neighbor
 
@@ -88,18 +91,18 @@ class knn:
 
         distribution = dict()
         for neighbor in self.neighbors:
-            if not neighbor[-1] in distribution:
-                dict[neighbor[-1]] = 1
+            if not neighbor.instance[-1] in distribution:
+                distribution[neighbor.instance[-1]] = 1
             else:
-                dict[neighbor[-1]] += 1
+                distribution[neighbor.instance[-1]] += 1
 
         max = 0
         value = ''
 
         for item in distribution.items():
-            if item.value > max:
-                max = item.value
-                value = item.key
+            if item[1] > max:
+                max = item[1]
+                value = item[0]
 
         if value == instance[-1]:
             self.hits += 1
