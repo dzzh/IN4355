@@ -26,6 +26,7 @@ class feature:
     def squared_deviation(self,value,mean):
         """Return squared deviation for a supplied continuous value and a mean.
            We do not calculate mean here because of performance"""
+        print 'mean: ' + str(mean) + ', value: ' + str(value)   
         return math.pow(mean-value,2)
 
     def standard_deviation(self):

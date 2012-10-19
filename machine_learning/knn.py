@@ -26,9 +26,6 @@ class knn:
         normalized_instance = list()
         for index,elem in enumerate(instance[:-1]):
             if type(elem) is float:
-                # print 'index: ' + str(index)
-                # print 'instance: ' + str(instance)
-                # print 'means: ' + str(self.means)
                 normalized_instance.append((elem - self.means[index])/self.stdevs[index])
             else:
                 normalized_instance.append(elem)
