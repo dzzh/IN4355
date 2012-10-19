@@ -28,13 +28,17 @@ class feature:
            We do not calculate mean here because of performance"""
         return math.pow(mean-value,2)
 
+    def standard_deviation(self):
+        """Return standard deviation for the given set of instances"""
+        return math.sqrt(self.variance())
+
     def variance(self):
         """Return variance for the available instances, works only for continuous features"""
         if not self.is_continuous():
             raise RuntimeError
 
-        _mean = self.mean()
-        return reduce(lambda x,y: self.squared_deviation(x, _mean) + self.squared_deviation(y, _mean), self.instances) / \
+        mean = self.mean()
+        return reduce(lambda x,y: self.squared_deviation(x, mean) + self.squared_deviation(y, mean), self.instances) / \
                len(self.instances)
 
     def prior_probability(self, instance, num_matches):
@@ -52,7 +56,6 @@ class feature:
             return (1/math.sqrt(2*math.pi*variance))*math.exp(-math.pow(instance-self.mean(),2)/2*variance)
 
 class clazz:
-
     def __init__(self, num_features, value):
         self.num_instances = 0
         self.num_matches = 0
@@ -81,43 +84,12 @@ class clazz:
         return self.likelihood_probability() * reduce(lambda x,y: x * y,
             [feature.prior_probability(instances[index],self.num_matches) for index,feature in enumerate(self.features)])
 
-class bayes:
-
+class neighbor:
     def __init__(self):
-        self.classes = list()
-        self.attempts = 0
-        self.hits = 0
+        self.distance = 0
+        self.instance = list()
 
-    def add_class(self, outcome):
-        """Add a possible outcome"""
-        self.classes.append(outcome)
 
-    def train(self, instance):
-        """Process a record from a testing set"""
-        for clazz in self.classes:
-            if clazz.value == instance[-1]:
-                clazz.add_match(instance[0:-1])
-            else:
-                clazz.add_instance()
 
-    def classify(self, instance):
-        """Classify a record from a testing set and show results"""
-
-        #print 'Classifying record ' + str(record)
-        self.attempts += 1
-        argmax = 0
-        class_value = ''
-        for clazz in self.classes:
-            probability = clazz.class_probability(instance[0:-1])
-            #print 'Probability for outcome ' + class_.value + ' is ' + str(probability)
-            if probability > argmax:
-                argmax = probability
-                class_value = clazz.value
-        if class_value == instance[-1]:
-            self.hits += 1
-            print 'Instance was successfully classified as ' + class_value
-        else:
-            print 'Instance of class ' + instance[-1] + ' was mistakenly classified as ' + class_value
-        print 'Hit ratio: ' + str(self.hits/float(self.attempts)) + ' (' + str(self.attempts) + ' attempts)'
 
 
