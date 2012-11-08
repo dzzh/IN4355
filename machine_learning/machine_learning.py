@@ -89,7 +89,6 @@ if __name__ == '__main__':
         for instance in classes:
             clazz_ = clazz(num_features(),instance)
             classifier.add_class(clazz_)
-
     elif args.classifier == 'knn':
         classifier = knn.knn(num_features(),args.kvalue)
     else:

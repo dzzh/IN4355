@@ -20,20 +20,32 @@ This report describes the project completed by the author during IN4355 Function
 
 \section{Introduction}
 
-Any publisher of a quality newspaper, being it merely digital, paper-only or available in both forms aims to provide his customers with the best service possible. Before invention of the Internet, the owners of newspapers and magazines were rather limited in technical means they used to improve the satisfaction of their readers. They could print either in black and white or in color, use newsprint or coated paper and that was mostly it. They could have changed the outlook of the print, but not the way the information was presented. 
+The research topic of the project discussed in this report is application of the functional programming techniques to the classification algorithms. The classification problem is one of the well-known statistical challenges and is being studied for several decades already. In statistical studies, classification means identifying a subset of categories from a category set to which a certain instance belongs. Classification is usually based on the existent training set with a number of instances already associated with the categories from a category set. Correlation between the instances and categories is defined by analyzing the quantifiable properties (features) of the subject instances\cite{WikiStatClass}.
+
+Many different classification algorithms exist with each of them having different properties. These algorithms can themselves be classified to a number of categories, such as linear classifiers, decision trees, neural networks and more. In the scope of this project we will discuss the implementation of a Naive Bayes classifier which is a rather simple representative of the linear classifiers and k-nearest neighbors algorithm, belonging to the kernel estimation classifiers.
+
+Classification algorithms are heavily used nowadays in many fields. The application domains where the classifiers are successfully applied are pattern recognition, natural languages processing, internet search, computer vision and more. The unstoppable growth of online data sets which is observed in recent years (also known as data deluge) forced the researchers to develop new efficient data mining techniques to successfully process these data sets. For data mining, classification algorithms are also often of utmost importance.
+
+This report discusses the applicability of certain functional programming techniques to the implementation of two classification algorithms, namely Naive Bayes and k-nearest neighbors classifiers using Python programming language. The contribution of the performed project is the investigation on the applicability of Python as general-purpose functional programming language and the workability of functional programming techniques for data classification purposes.
+
+The rest of this paper is organized as follows. In Section 2 we discuss the algorithms implemented in the project. Section 3 will give an insight into the existent approaches in implementing data classifiers used in industry and academia. Section 4 is devoted to the description of a project implementing two classifiers in a functional style. Section 5 contains the evaluation of the developed implementation and its comparison with the other existent software packages. In Section 6 the findings and conclusions are placed.
+
+\section{Description of the implemented algorithms}
 
 \section{Existent approaches to build the classifiers}
 
+Since the classification topic is important for many real-world tasks, there are many software packages that provide their customers a number of implementations for the classification algorithms. As the logic behind many of the classifiers is rather simple, implementations of most of such algorithms exist for virtually every programming language used in production. Classification algorithms are studied in academia and often used as the lab assignments. The popularity of these algorithms implies that there 
 
-\section{Architecture and Implementation}
+\section{Architecture and implementation}
 
 
 \section{Evaluation}
 
-
+\section{Conclusion}
 
 \begin{thebibliography}{99}
 \bibitem{Bogers} T. Bogers and A. van den Bosch. Comparing and Evaluating Information Retrieval Algorithms for News Recommendation. In \emph{Proceedings of RecSys '07}, pages 141-145, New York, NY, 2007. ACM Press.  
+\bibitem{WikiStatClass} Wikipedia - Statistical classification. \url{http://en.wikipedia.org/wiki/Statistical\_classification}.
 \end{thebibliography}
 
 \end{document}
