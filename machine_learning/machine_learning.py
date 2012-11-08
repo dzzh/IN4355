@@ -19,7 +19,7 @@ def clear_data(word):
     return word.strip("{}()\n\r\"\'")
 
 def num_features():
-    """Return number of attributes used for classification.
+    """Return number of features used for classification.
        We assume that all records have all the attributes filled in"""
     return len(training_set[0]) - 1
 
@@ -51,7 +51,7 @@ def read_file(file):
 
 
 def split_sets(percentage):
-    """Shuffle the training set and move (100-percentage) items to testing set"""
+    """Shuffle the training set and move (100-percentage) percents items to testing set"""
     if percentage == 100:
         return
 

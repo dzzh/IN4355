@@ -81,10 +81,10 @@ class knn:
         for cur_inst in self.normalized_instances:
             distance = self.euclidean_distance(cur_inst, instance)
             if len(self.neighbors) < self.k or distance < self.max_neighbor_distance():
-                new_neigbor = classes.neighbor()
-                new_neigbor.distance = distance
-                new_neigbor.instance = instance
-                self.replace_far_neighbor(new_neigbor)
+                new_neighbor = classes.neighbor()
+                new_neighbor.distance = distance
+                new_neighbor.instance = instance
+                self.replace_far_neighbor(new_neighbor)
 
         distribution = dict()
         for neighbor in self.neighbors:
