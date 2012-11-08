@@ -1,4 +1,5 @@
 import math
+import sys
 import classes
 
 DELTA = 0.000001
@@ -29,6 +30,7 @@ class knn:
                 normalized_instance.append((elem - self.means[index])/self.stdevs[index])
             else:
                 normalized_instance.append(elem)
+        normalized_instance.append(instance[-1])
         return normalized_instance
 
     def finish_training(self):
@@ -61,9 +63,12 @@ class knn:
         self.neighbors = list()
 
     def max_neighbor_distance(self):
-        return max([n.distance for n in self.neighbors])
+        if self.neighbors:
+            return max([n.distance for n in self.neighbors])
+        else:
+            return sys.maxint
 
-    def replace_far_neighbor(self, neighbor):
+    def add_neighbor(self, neighbor):
         if len(self.neighbors) < self.k:
             self.neighbors.append(neighbor)
         else:
@@ -79,12 +84,12 @@ class knn:
         self.clear_neighbors()
 
         for cur_inst in self.normalized_instances:
-            distance = self.euclidean_distance(cur_inst, instance)
+            distance = self.euclidean_distance(cur_inst, normalized_instance)
             if len(self.neighbors) < self.k or distance < self.max_neighbor_distance():
                 new_neighbor = classes.neighbor()
                 new_neighbor.distance = distance
-                new_neighbor.instance = instance
-                self.replace_far_neighbor(new_neighbor)
+                new_neighbor.instance = cur_inst
+                self.add_neighbor(new_neighbor)
 
         distribution = dict()
         for neighbor in self.neighbors:
@@ -105,7 +110,7 @@ class knn:
             self.hits += 1
             print 'Instance was successfully classified as ' + value
         else:
-            print 'Instance of class ' + instance[-1] + ' was mistakenly classified as ' + value
+            print 'Instance of class %s was mistakenly classified as %s' %(instance[-1], str(value))
         print 'Hit ratio: ' + str(self.hits/float(self.attempts)) + ' (' + str(self.attempts) + ' attempts)'
 
 

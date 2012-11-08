@@ -50,9 +50,9 @@ The idea to classify the instances based on the similarity with the instances ly
 
 Despite this algorithm seems to be rather straightforward and easy to implement, many researchers work on improving its properties for better performance on different data sets. The performance of the algorithm depends significantly on the selection of distance and voting functions and many different implementation of them exist.
 
-For this project, Euclidean distance was used as distance function. However, one important adjustment was made to it to address the existence of continuous and non-continuous features. 
+For this project, Euclidean distance was used as distance function. However, one important adjustment was made to it to address the existence of continuous and discrete features. 
 
-Some feature vectors in the data sets used to test the correctness of the algorithm shared both continuous (float values) and discrete (a string value from a set) features and to measure the distance correctly there was a need to 
+Some feature vectors in the data sets used to test the correctness of the algorithm shared both continuous (float values) and discrete (a string value from a set) features and there was a need in the distance function that would give proper results for these mixed setups. To solve this problem, both continuous and discrete values were normalized prior to the classification. For continuous values, min-max normalization was applied. For discrete values, 
 
 
 \section{Existent approaches to building the classifiers}

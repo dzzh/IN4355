@@ -57,12 +57,12 @@ def split_sets(percentage):
 
     global training_set
     global testing_set
-
     random.shuffle(training_set)
-    items_to_move = len(training_set) / 100 * (100 - percentage)
+    items_to_move = int(round(len(training_set) / 100.0 * (100 - percentage)))
     offset = len(training_set) - items_to_move
     testing_set = training_set[offset:]
     training_set = training_set[:offset]
+    print 'Training set: %d instances, testing set: %d instances' %(len(training_set), len(testing_set))
 
 def parse_args():
     """Parse command-line args"""
