@@ -13,7 +13,7 @@ class feature:
     def is_continuous(self):
         """Return True if the feature has only continuous instances, false otherwise.
            Is needed because probabilities are computed differently for floats and strings"""
-        return reduce(lambda x,y: type(x) is float or type(y) is float, self.instances)
+        return reduce(lambda x,y: type(x) is float and type(y) is float, self.instances)
 
     def mean(self):
         """Return mean for the available instances, works only for continuous features"""
@@ -26,7 +26,6 @@ class feature:
     def squared_deviation(self,value,mean):
         """Return squared deviation for a supplied continuous value and a mean.
            We do not calculate mean here because of performance"""
-        print 'mean: ' + str(mean) + ', value: ' + str(value)   
         return math.pow(mean-value,2)
 
     def standard_deviation(self):
@@ -39,8 +38,13 @@ class feature:
             raise RuntimeError
 
         mean = self.mean()
-        return reduce(lambda x,y: self.squared_deviation(x, mean) + self.squared_deviation(y, mean), self.instances) / \
-               len(self.instances)
+        # return reduce(lambda x,y: self.squared_deviation(x, mean) + self.squared_deviation(y, mean), self.instances) / \
+        #        len(self.instances)
+        stdev = 0
+        for instance in self.instances:
+            stdev += self.squared_deviation(instance, mean)
+
+        return stdev/float(len(self.instances))
 
     def prior_probability(self, instance, num_matches):
         """Calculate the prior probability of a value for a given outcome"""
