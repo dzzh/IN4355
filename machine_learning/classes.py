@@ -17,7 +17,8 @@ class feature:
             if not type(instance) is float:
                 return False
         return True
-        #return reduce(lambda x,y: type(x) is float and type(y) is float, self.instances)
+        #For some reason this reduce does not work
+#        return reduce(lambda x,y: type(x) is float and type(y) is float, self.instances)
 
     def mean(self):
         """Return mean for the available instances, works only for continuous features"""
