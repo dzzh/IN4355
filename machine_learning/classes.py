@@ -63,9 +63,8 @@ class feature:
         else:
             #just performance
             variance = self.variance()
-
             #mean-variance formula for continuous attributes
-            return (1/math.sqrt(2*math.pi*variance))*math.exp(-math.pow(instance-self.mean(),2)/2*variance)
+            return (1/math.sqrt(2*math.pi*variance*variance))*math.exp(-math.pow((instance-self.mean())/variance,2)/2)
 
 class clazz:
     def __init__(self, num_features, value):

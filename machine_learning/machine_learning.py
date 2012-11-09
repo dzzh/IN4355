@@ -13,7 +13,12 @@ PERCENTAGE_TESTING = 90
 #Dataset-related variables
 training_set = list()
 testing_set = list()
-classes = list()
+cls = list()
+statistics = None
+instances = list()
+normalized_instances = list()
+means = list()
+stdevs = list()
 
 def clear_data(word):
     """Trim garbage from the data entries"""
@@ -36,8 +41,8 @@ def read_file(file, var):
             str = a_line.split(",")
 
             #forming list of all classes
-            if clear_data(str[-1]) not in classes:
-                classes.append(clear_data(str[-1]))
+            if clear_data(str[-1]) not in cls:
+                cls.append(clear_data(str[-1]))
 
             #parsing input
             instance = list()
@@ -78,6 +83,30 @@ def parse_args():
         help='k-value for k-nearest neighbor classifier')
     return parser.parse_args()
 
+def normalize_instance(instance):
+    """Normalize a given instance using z-score"""
+    normalized_instance = list()
+    for index,elem in enumerate(instance[:-1]):
+        if type(elem) is float:
+            normalized_instance.append((elem - means[index])/stdevs[index])
+        else:
+            normalized_instance.append(elem)
+    normalized_instance.append(instance[-1])
+    return normalized_instance
+
+def normalize():
+    """Perform z-score normalization for continuous features"""
+    for feature in statistics.features:
+        if feature.is_continuous():
+            means.append(feature.mean())
+            stdevs.append(feature.standard_deviation())
+        else:
+            means.append(0)
+            stdevs.append(1)
+
+    for instance in instances:
+        normalized_instances.append(normalize_instance(instance))
+
 #Entry point
 if __name__ == '__main__':
     args = parse_args()
@@ -95,21 +124,28 @@ if __name__ == '__main__':
 
     if args.classifier == 'bayes':
         classifier = bayes.bayes()
-        for instance in classes:
+        for instance in cls:
             clazz_ = clazz(num_features(),instance)
             classifier.add_class(clazz_)
     elif args.classifier == 'knn':
-        classifier = knn.knn(num_features(),args.kvalue)
+        classifier = knn.knn(args.kvalue)
     else:
          raise RuntimeError
 
+    #Normalize continuous features
+    statistics = clazz(num_features(),'training_set')
     for instance in training_set:
+        statistics.add_match(instance)
+        instances.append(instance)
+    normalize()
+
+    for instance in normalized_instances:
         classifier.train(instance)
 
-    classifier.finish_training()
+    classifier.instances = normalized_instances
 
     for instance in testing_set:
-        classifier.classify(instance)
+        classifier.classify(normalize_instance(instance))
 
 
 
