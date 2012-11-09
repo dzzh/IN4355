@@ -16,7 +16,7 @@ class knn:
 
     def train(self, instance):
         """Process an instance from a testing set, not used in KNN"""
-        pass
+        self.instances.append(instance)
 
     def squared_scalar_distance(self,s1,s2):
         if type(s1) is float and type(s2) is float:
