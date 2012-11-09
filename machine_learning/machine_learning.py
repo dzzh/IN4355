@@ -7,6 +7,7 @@ import knn
 
 #Constants
 from classes import clazz
+import utils
 
 DATA_SETS_DIR = 'data_sets'
 PERCENTAGE_TESTING = 90
@@ -101,8 +102,7 @@ def normalize(instances):
             means.append(0)
             stdevs.append(1)
 
-    for instance in instances:
-        result.append(normalize_instance(instance))
+    [result.append(normalize_instance(instance)) for instance in instances]
     return result
 
 
@@ -126,6 +126,7 @@ if __name__ == '__main__':
         print 'Testing set is derived from training set'
     print 'Training set: %d instances, testing set: %d instances' %(len(training_set), len(testing_set))
 
+    #Choose classifier
     if args.classifier == 'bayes':
         classifier = bayes.bayes()
         for instance in cls:
@@ -140,9 +141,11 @@ if __name__ == '__main__':
     statistics = clazz(len(training_set[0])-1,'training_set')
     [statistics.add_match(instance) for instance in training_set]
 
+    #Train and classify
     [classifier.train(instance) for instance in normalize(training_set)]
     [classifier.classify(normalize_instance(instance)) for instance in testing_set]
-
+    utils.print_results(classifier.attempts,classifier.hits)
+    print 'Classification completed'
 
 
 

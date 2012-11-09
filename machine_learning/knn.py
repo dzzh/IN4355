@@ -1,6 +1,7 @@
 import math
 import sys
 import classes
+import utils
 
 DELTA = 0.000001
 
@@ -14,11 +15,17 @@ class knn:
         self.attempts = 0
         self.hits = 0
 
+
     def train(self, instance):
-        """Process an instance from a testing set, not used in KNN"""
+        """Process an instance from a training set."""
         self.instances.append(instance)
 
+
     def squared_scalar_distance(self,s1,s2):
+        """Compute distance between two features.
+        For continuous features, squared scalar distance is computed.
+        For discrete features, 0 is assumed for same values, 1 for different"""
+
         if type(s1) is float and type(s2) is float:
             return math.pow(s1-s2,2)
         elif s1 == s2:
@@ -26,22 +33,26 @@ class knn:
         else:
             return 1
 
+
     def euclidean_distance(self, i1, i2):
+        """Compute Euclidean distance for two feature vectors"""
         d = 0
         for index,item in enumerate(i1[0:-1]):
              d += self.squared_scalar_distance(i1[index],i2[index])
         return math.sqrt(d)
 
+
     def clear_neighbors(self):
         self.neighbors = list()
 
+
     def max_neighbor_distance(self):
-        if self.neighbors:
-            return max([n.distance for n in self.neighbors])
-        else:
-            return sys.maxint
+        """Return distance to the farthest neighbor within K nearest neighbors"""
+        return max([n.distance for n in self.neighbors]) if self.neighbors else sys.maxint
+
 
     def add_neighbor(self, neighbor):
+        """Add a neighbor to the list of K nearest neighbors. If the list is full, replace the farthest neighbor"""
         if len(self.neighbors) < self.k:
             self.neighbors.append(neighbor)
         else:
@@ -50,6 +61,7 @@ class knn:
                 if self.max_neighbor_distance() - n.distance < DELTA:
                     index = i
             self.neighbors[index] = neighbor
+
 
     def classify(self, instance):
         self.attempts += 1
@@ -80,10 +92,9 @@ class knn:
 
         if value == instance[-1]:
             self.hits += 1
-            print 'Instance was successfully classified as ' + value
-        else:
-            print 'Instance of class %s was mistakenly classified as %s' %(instance[-1], str(value))
-        self.train(instance)
-        print 'Hit ratio: ' + str(self.hits/float(self.attempts)) + ' (' + str(self.attempts) + ' attempts)'
+            self.train(instance)
+
+        if not self.attempts % 100:
+            utils.print_results(self.attempts,self.hits)
 
 
