@@ -35,7 +35,7 @@ class knn:
 
     def finish_training(self):
         for feature in self.statistics.features:
-            if feature.is_continuous():                
+            if feature.is_continuous():
                 self.means.append(feature.mean())
                 self.stdevs.append(feature.standard_deviation())
             else:
@@ -111,6 +111,7 @@ class knn:
             print 'Instance was successfully classified as ' + value
         else:
             print 'Instance of class %s was mistakenly classified as %s' %(instance[-1], str(value))
+        self.train(instance)
         print 'Hit ratio: ' + str(self.hits/float(self.attempts)) + ' (' + str(self.attempts) + ' attempts)'
 
 

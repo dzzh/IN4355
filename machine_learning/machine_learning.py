@@ -1,4 +1,5 @@
 import argparse
+import os
 import random
 import bayes
 import knn
@@ -23,7 +24,7 @@ def num_features():
        We assume that all records have all the attributes filled in"""
     return len(training_set[0]) - 1
 
-def read_file(file):
+def read_file(file, var):
     """Read training data into memory"""
 
     with open(file, 'r') as a_file:
@@ -47,7 +48,7 @@ def read_file(file):
                 except ValueError:
                     pass
                 instance.append(value)
-            training_set.append(instance)
+            var.append(instance)
 
 
 def split_sets(percentage):
@@ -62,7 +63,6 @@ def split_sets(percentage):
     offset = len(training_set) - items_to_move
     testing_set = training_set[offset:]
     training_set = training_set[:offset]
-    print 'Training set: %d instances, testing set: %d instances' %(len(training_set), len(testing_set))
 
 def parse_args():
     """Parse command-line args"""
@@ -81,8 +81,17 @@ def parse_args():
 #Entry point
 if __name__ == '__main__':
     args = parse_args()
-    read_file(DATA_SETS_DIR + '/' + args.dataset + '/' + args.dataset + '.data')
-    split_sets(args.percentage)
+    file_prefix = DATA_SETS_DIR + '/' + args.dataset + '/' + args.dataset
+    read_file(file_prefix + '.data', training_set)
+    #If
+    if os.path.exists(file_prefix + '.test'):
+        read_file(file_prefix + '.test', testing_set)
+        print 'Testing set is read from a .test file'
+    else:
+        split_sets(args.percentage)
+        print 'Testing set is derived from training set'
+
+    print 'Training set: %d instances, testing set: %d instances' %(len(training_set), len(testing_set))
 
     if args.classifier == 'bayes':
         classifier = bayes.bayes()
