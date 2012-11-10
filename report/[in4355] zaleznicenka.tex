@@ -1,4 +1,25 @@
 \documentclass{llncs}
+\usepackage{listings}
+\usepackage{caption}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{courier}
+
+\DeclareCaptionFont{white}{\color{white}}
+\DeclareCaptionFormat{listing}{\colorbox{Gray}{\parbox{\textwidth}{#1#2#3}}}
+\captionsetup[lstlisting]{format=listing,labelfont=white,textfont=white}
+\definecolor{lightgray}{gray}{0.9}
+\lstset{
+	language=Python,
+	basicstyle=\small\ttfamily,
+	commentstyle=\color{Gray},
+	tabsize=4,
+	numbers=left,
+	numberstyle=\tiny,
+	stepnumber=1,
+	numbersep=5pt,
+	backgroundcolor=\color{lightgray},
+	breaklines=true
+	}
 
 \begin{document}
 
@@ -66,50 +87,117 @@ Since the classification topic is important for many real-world tasks, there are
 
 \section{Architecture and implementation}
 
-The application structure consists of the main program responsible for I/O and normalization, a class container and classifiers. 
+The application structure consists of the main program responsible for I/O and normalization, a class container and classifiers code. 
 
 Internally, all the instances are represented simply as lists of their features. This makes it possible to perform operations on them in a functional way.
 
 \subsection{Main program}
 
-The discussed project was implemented as a command-line application reading data from files and reporting to the output stream. Main program accepts a number of parameters allowing to adjust certain application properties. It is located in \texttt{machine\_learning.py} file.
+The discussed project was implemented as a command-line application reading data from files and reporting to the output stream. Main program accepts a number of parameters allowing to adjust certain application properties. It is located in \lstinline{machine_learning.py} file.
 
-The only positional argument accepted by the main program is the name of the dataset. Application parser was written to support the data sets from UCI Machine Learning Repository\footnote{\url{http://archive.ics.uci.edu/ml/}}. To work with any of the data sets from this repository, it has to be downloaded and placed into its own directory within \texttt{data\_sets} directory in the project root. When the main program is launched, it accepts \texttt{.data} file from the named directory as the training set. If the program also finds a \texttt{.test} file in the same directory, it is accepted as the testing set. Otherwise, the testing set is generated as a subset of the training set.
+The only positional argument accepted by the main program is the name of the dataset. Application parser was written to support the data sets from UCI Machine Learning Repository\footnote{\url{http://archive.ics.uci.edu/ml/}}. To work with any of the data sets from this repository, it has to be downloaded and placed into its own directory within \lstinline{data_sets} directory in the project root. When the main program is launched, it accepts \lstinline{.data} file from the named directory as the training set. If the program also finds a \lstinline{.test} file in the same directory, it is accepted as the testing set. Otherwise, the testing set is generated as a subset of the training set.
 
-Main program assumes NB being a default classifier. To choose KNN classifier, it has to be called with \texttt{-c knn} argument. \texttt{-k <value>} argument is used to set K value for this classifier. \texttt{-p <percent>} specifies a percentage of values to be moved to the testing set from the training set if \texttt{.test} file is not found.
+Main program assumes NB being a default classifier. To choose KNN classifier, it has to be called with \lstinline{-c knn} argument. \lstinline{-k <value>} argument is used to set K value for this classifier. \lstinline{-p <percent>} specifies a percentage of values to be moved to the testing set from the training set if \lstinline{.test} file is not found.
 
 \subsection{Class container}
 
-The program has two supplementary classes, namely \texttt{Clazz} and \texttt{Feature} that are placed in \texttt{classes.py} file. These classes were written to support data normalization and probability calculations in for naive Bayes classifier. These classes are not used in the implementation of KNN classifier.
+The program has two supplementary classes, namely \lstinline{Clazz} and \lstinline{Feature} that are placed in \lstinline{classes.py} file. These classes were written to support data normalization and probability calculations for naive Bayes classifier. These classes are not used in the implementation of KNN classifier.
 
-\texttt{Clazz} class is a container for the instances from a training set belonging to one certain category (or class, or outcome). It holds the statistics, namely number of instances belonging to it and number of matches during the classification and a list of \texttt{Feature} objects containing data of the matched instances. Also, it is responsible for providing NB classifier with the probability that the instance being classified belongs to this class.
+\lstinline{Clazz} class is a container for the instances from a training set belonging to one certain category (or class, or outcome). It holds the statistics, namely number of instances belonging to it and number of matches during the classification and a list of \lstinline{Feature} objects containing data of the matched instances. Also, it is responsible for providing NB classifier with the probability that the instance being classified belongs to this class.
 
-\texttt{Feature} class contains a list of values for a given feature for all the instances. Thus, each \texttt{Clazz} object has a list of \texttt{Feature} objects with their number equal the number of features in the given data set. Also, \texttt{Feature} class has a number of mathematical functions operating on the list of values, like \texttt{mean()}, \texttt{standard\_deviation()} and \texttt{variance()}. The other methods in this class analyze the list of features to contain only continuous values and calculate prior probability for NB classifier. The prior probabilities are used by \texttt{Clazz} class to calculate class probabilities.
+\lstinline{Feature} class contains a list of values for a given feature for all the instances. Thus, each \lstinline{Clazz} object has a list of \lstinline{Feature} objects with their number equal the number of features in the given data set. Also, \lstinline{Feature} class has a number of mathematical functions operating on the list of values, like \lstinline{mean()}, \lstinline{standard_deviation()} and \lstinline{variance()}. The other methods in this class analyze the list of features to contain only continuous values and calculate prior probability for NB classifier. The prior probabilities are used by \lstinline{Clazz} class to calculate class probabilities.
 
-For normalization purposes, main program has an instance of \texttt{Clazz} class where all the instances from the training set are stored. NB classifier has as many \texttt{Clazz} instances as the number of outcomes in the training set.
+For normalization purposes, main program has an instance of \lstinline{Clazz} class where all the instances from the training set are stored. NB classifier has as many \lstinline{Clazz} instances as the number of outcomes in the training set.
 
-The existence of these supplementary classes generally violates the principles of functional programming. It was decided to introduce them due to the need to save the state between the certain stages of program execution. First of all, for normalization there was a need to save all the instance in a data structure. Secondly, there was a need to gather statistics, i.e. number of hits during the classification. Despite it was possible to implement this functionality using only the sequences and functions on them, that would significantly complicate the structure of the code.
+The existence of these supplementary classes generally violates the principles of functional programming. It was decided to introduce them due to the need to save the state between the certain stages of program execution. First of all, for normalization there was a need to save all the instances from a training set in a data structure. Secondly, there was a need to gather statistics, i.e. number of hits during the classification. Despite it was possible to implement this functionality using only the sequences and functions on them, that would significantly complicate the structure of the code.
 
 The classifiers described below are also organized as classes though in this situation their structure is mostly dictated by the need to separate their functionality and let the main program to call them interchangeably, not by the need to use object-oriented programming techniques. Classifier classes can easily be rewritten as standard Python modules containing only function calls.
 
 \subsection{Naive Bayes classifier}
 
-The most challenging part of NB classifier, namely probability calculations, is implemented in the class container. The classifier itself is a vary simple class gathering classification statistics and holding a list of \texttt{Clazz} objects. After its initialization, the main program analyzes the outcomes that exist in the training set and calls \texttt{add\_class(name)} method to add a new instance of \texttt{Clazz} class to the classifier.
+The most challenging part of NB classifier, namely probability calculations, is implemented in the class container. The classifier itself is a very simple class gathering classification statistics and holding a list of \lstinline{Clazz} objects. After its initialization, the main program analyzes the outcomes that exist in the training set and calls \lstinline{add_class(name)} method to add a new instance of \lstinline{Clazz} class to the classifier.
 
-The training process is implemented in \texttt{train(instance)} method. The classifier adds the instance to one of its classes based on the known instance outcome.
+The training process is implemented in \lstinline{train(instance)} method. The classifier adds the instance to one of its classes based on the known instance outcome.
 
-Classification logic is implemented in \texttt{classify(instance)} method. For all of the outcomes the classifier calculates their class probability and decides on the highest probability. Then the result is compared with the real outcome of the instance and if they match, the classifier increments hits number.
+Classification logic is implemented in \lstinline{classify(instance)} method. For all of the outcomes the classifier calculates their class probability and decides on the highest probability. Then the result is compared with the real outcome of the instance and if they match, the classifier increments hits number.
 
 \subsection{K-nearest neighbors classifier}
 
+KNN classifier contains a list of instances and a list of neighbors as well as some statistics-related variables. For this classifier it is needed to keep all the instances from a training set in memory as during the classification process there is a need to measure the distance between the instance from a testing set and all the instances from a training set. In pure functional programming it would be logical not to keep the instances of the training set in the variable but rather read them from a file (say, using a generator function) but it would lead to the drastic performance drop.
+
+Training process for KNN classifier is very simple: we just add an instance from a training set to the list of instances.
+
+Classification process is implemented in \lstinline{classify(instance)} method. Its logic is the following. We start with an empty list of neighbors and process all the instances from the training set in a loop. At each iteration, we measure the distance between the two instances. If this distance is less than the distance to the farthest neighbor, current instance is added to the list of neighbors. If the list of neighbors is already full, the farthest neighbor is deleted from the list. 
+
+After all the instances from the training set are processed, we use majority voting to find the most probable category of the instance being classified and compare it with the real instance outcome. If they match, we increase hits number.
+
 \subsection{Functional programming techniques used}
+
+While implementing the project, a lot of attention was paid to develop its architecture and write the code in concordance with the principles of functional programming. The application of these principles for Python programmers is discussed in \cite{Kuchling}\cite{Mertz}.
+
+\subsubsection{Partial functions.}
+
+In Python, all the functions are the first-class objects, which allows to use them higher-order functions. One of the most used higher-order functions in Python is \lstinline{functools.partial()} that allows to construct variants of existing functions. In the discussed project, two partial functions were created from a general \lstinline{read_file()} function used in main program for file input. The implementation of the partial functions allowed to simplify their calls while reading training and testing sets from the different files. 
+
+\begin{lstlisting}[caption = Application of partial functions.]
+from functools import partial
+
+read_training = partial(read_file, file=file_prefix+'.data', is_training=True)
+read_testing = partial(read_file, file=file_prefix+'.test', is_training=False)
+
+training_set = read_training()
+if os.path.exists(file_prefix + '.test'):
+	testing_set = read_testing()
+\end{lstlisting}
+
+\subsubsection{List slices and comprehensions.}
+
+Python provides rich functionality for operating with iterators and list comprehensions allow to perform different operations on iterable variables. Listing 1.2 shows the core logic of the program which is implemented in just four lines of code using the list comprehensions.
+
+\begin{lstlisting}[caption = Core logic of the application.]
+#Normalize training set
+statistics = Clazz(len(training_set[0])-1,'training_set')
+[statistics.add_match(instance) for instance in training_set]
+
+#Train and classify
+[classifier.train(instance) for instance in normalize(training_set)]
+[classifier.classify(normalize_instance(instance)) for instance in testing_set]
+\end{lstlisting}
+
+List slices are also an important in Python as they provide easy access to the list partitions. In this project, the slices were used to get access to the instance outcome. As the outcome was stored as the last feature in the list, it was accessed as \lstinline{features[-1]}. Another usage of the slices was while splitting the training set into training and testing sets. 
+
+\begin{lstlisting}[caption = Splitting training set.]
+if not os.path.exists(file_prefix + '.test'):
+	offset = get_split_offset(args.percentage, training_set)
+    testing_set = training_set[offset:]
+    training_set = training_set[:offset]
+\end{lstlisting}
+
+\subsubsection{Lambda expresiions.} In this project, lambda expressions were used as predicates for \lstinline{filter()} and \lstinline{reduce()} functions. Two examples containing lambda expressions are discussed in the consequent paragraph.
+
+\subsubsection{\lstinline{map(), filter(), reduce()} functions.}
+
+These built-in functions were often used by Python 1.x programmers to perform operations on iterable data. However, after introduction of list comprehensions in Python 2.0, the first two of these functions became somewhat obsolete as the comprehensions duplicate their functionality and have more concise syntax. Thus, \lstinline{map()} function was not used in this project, \lstinline{filter()}. \lstinline{reduce()} function was used more often to perform data aggregation over iterable variables. E.g., the following expression was used to compute mean for a list of feature values: \lstinline{reduce(lambda x,y: x + y, self.instances) / len(self.instances)}. 
+
+It is worth to notice that \lstinline{reduce()} function was not always working as expected and had to be substituted by the loops. For instance, this function was initially used to determine whether a list contains only float values: \lstinline{reduce(lambda x,y: type(x) is float and type(y) is float, self.instances)}. For some reason, this function was always returning \lstinline{False}. It was substituted by the following loop that works as expected.
+
+\begin{lstlisting}[caption = A loop determining whether the list contains only floats.]
+for instance in self.instances:
+    if not type(instance) is float:
+        return False
+    return True
+\end{lstlisting}
+
+Another impression from a reduce function was that its syntax is overly complex and is often hard to understand after the code is written. The usual loops are generally more understandable.
 
 \section{Evaluation}
 
 \section{Conclusion}
 
 \begin{thebibliography}{99}
-\bibitem{Manning} C.D. Manning, P. Raghavan and H. Schutze. Introduction to information retrieval.  Cambridge University Press, 2008.  
+\bibitem{Kuchling} A. M. Kuchling. Python 2.7.3 documentation - Functional Programming HOWTO. \url{http://docs.python.org/2/howto/functional.html}
+\bibitem{Manning} C.D. Manning, P. Raghavan and H. Schutze. Introduction to information retrieval.  Cambridge University Press, 2008. 
+\bibitem{Mertz} D.Mertz. Charming Python: Functional programming in Python. \url{http://www.ibm.com/developerworks/linux/library/l-prog/index.html}
 \bibitem{Rish} I. Rish. An empirical study of the naive Bayes classifier. In \emph{Proceedings of IJCAI-01 workshop on Empirical Methods in AI}, pages 41--46, Sicily, Italy, 2001.
 \bibitem{Suarez} M.M. Suarez-Alvarez, D. Pham, M.Y. Prostov and Y.I. Prostov. Statistical approach to normalization of feature vectors and clustering of mixed datasets. In \emph{Proc. R. Soc. A}, 2011. doi: 10.1098/rspa.2011.0704. 
 \bibitem{WikiKNN} Wikipedia - K-nearest neighbor algorithm. \url{http://en.wikipedia.org/wiki/K-nearest\_neighbor\_algorithm}.
