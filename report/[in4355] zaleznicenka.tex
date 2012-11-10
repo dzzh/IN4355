@@ -192,6 +192,55 @@ Another impression from a reduce function was that its syntax is overly complex 
 
 \section{Evaluation}
 
+The application performance was tested on three data sets from UCI repository. Their characteristics can be found in a Table 1.
+
+\begin{table}
+\begin{center}
+  \begin{tabular}{ | c | c | c | }
+    \hline
+    \textbf{Name} & \textbf{\# instances} & \textbf{Features type} \\ \hline
+    iris & 150 & continuous \\ \hline
+    car & 1728 & discrete \\ \hline
+    adult & 32561+16281 & mixed \\
+    \hline
+  \end{tabular}
+  \caption{Data sets characteristics.}
+\end{center}
+\end{table}
+
+For \emph{iris} and \emph{car} data sets the testing set was derived from the training set (percentage of data left for training is shown in column 3), for \emph{adult} data set there was a testing file available with 16281 instances. The testing results for these data sets can be found in Table 2. 
+
+\begin{table}
+\begin{center}
+  \begin{tabular}{ | c | c | c | c | c |}
+    \hline
+    \textbf{Data set} & \textbf{Classifier} & \textbf{\% training} & \textbf{Execution time} & \textbf{Error rate}\\ \hline
+    iris & NB & 90 & 1 sec & 0-6.7\% \\ \hline
+    iris & NB & 80 & 1 sec & 0-10.0\% \\ \hline
+    iris & KNN-1 & 90 & 1 sec & 0-6.7\% \\ \hline
+    iris & KNN-1 & 80 & 1 sec & 0-10.0\% \\ \hline
+    iris & KNN-3 & 90 & 1 sec & 0-6.7\% \\ \hline
+    iris & KNN-3 & 80 & 1 sec & 0-10.0\% \\ \hline
+    car & NB & 90 & 1 sec & 12.8-15.6\% \\ \hline
+    car & NB & 80 & 1 sec & 10.1-17.1\% \\ \hline
+    car & KNN-1 & 90 & 3 sec & 16.2-29.5\% \\ \hline
+    car & KNN-1 & 80 & 4 sec & 19.1-23.4\% \\ \hline
+    car & KNN-3 & 90 & 3 sec & 6.9-13.3\% \\ \hline
+    car & KNN-3 & 80 & 4 sec & 10.7-14.7\% \\ \hline
+	adult & NB & - & 93 min & 20.7\% \\ \hline
+    adult & KNN-3 & - & 160 min & 16.9\% \\
+    \hline
+  \end{tabular}
+  \caption{Testing results.}
+\end{center}
+\end{table}
+
+For \emph{iris} and \emph{car} data sets we have various error rates as the testing set is randomly generated from the training set. The difference in results is due to this randomness. For these data sets, all the calculations were done for five times and the maximum and minimum error rates observed were reported. For \emph{adult} data set (Census Bureau database), the testing set was the same. It was taken from the accompanying testing file.
+
+The testing results show that the algorithms were implemented correctly. KNN-1 classifier (KNN with K=1) has the worst results and KNN-3 (KNN with K=3) has the best results as its results do not depend on the data distribution pattern as requested for correct NB operations. NB results lie in between. The error rate for both classifiers can be decreased if applying the normalization procedure as described in \cite{Suarez}. The reference implementation of NB classifier gives 16.1\% error rate, KNN-1 gives 21.4\%, KNN-3 gives 20.4\%. The results with 80\% of instances in the training set are worse than with 90\% of instances as the classifiers work better with more training data available.
+
+
+
 \section{Conclusion}
 
 \begin{thebibliography}{99}
