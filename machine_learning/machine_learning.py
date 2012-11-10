@@ -6,7 +6,7 @@ import bayes
 import knn
 
 #Constants
-from classes import clazz
+from classes import Clazz
 import utils
 
 DATA_SETS_DIR = 'data_sets'
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     if args.classifier == 'bayes':
         classifier = bayes.bayes()
         for instance in cls:
-            clazz_ = clazz(len(training_set[0])-1,instance)
+            clazz_ = Clazz(len(training_set[0])-1,instance)
             classifier.add_class(clazz_)
     elif args.classifier == 'knn':
         classifier = knn.knn(args.kvalue)
@@ -138,7 +138,7 @@ if __name__ == '__main__':
          raise RuntimeError
 
     #Normalize continuous features
-    statistics = clazz(len(training_set[0])-1,'training_set')
+    statistics = Clazz(len(training_set[0])-1,'training_set')
     [statistics.add_match(instance) for instance in training_set]
 
     #Train and classify

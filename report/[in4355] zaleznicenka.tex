@@ -26,13 +26,13 @@ Many different classification algorithms exist with each of them having differen
 
 Classification algorithms are heavily used nowadays in many fields. The application domains where the classifiers are successfully applied are pattern recognition, natural languages processing, internet search, computer vision and more. The unstoppable growth of online data sets which is observed in recent years (also known as data deluge) forced the researchers to develop new efficient data mining techniques to successfully process these data sets. For data mining, classification algorithms are also often of utmost importance.
 
-This report discusses the applicability of certain functional programming techniques to the implementation of two classification algorithms using Python programming language. The contribution of the completed project is the investigation on the applicability of Python as general-purpose functional programming language and the workability of functional programming techniques for data classification purposes.
+This report discusses the applicability of certain functional programming techniques to the implementation of two classification algorithms using Python programming language. The contribution of the completed project is the investigation on the applicability of Python as general-purpose functional programming language and the workability of functional programming techniques for data classification purposes. The source code of the project as well as the latest version of this paper are publicly available at Github\footnote{\url{https://github.com/dzzh/IN4355}}.
 
 The rest of this paper is organized as follows. In Section 2 we discuss the algorithms implemented in the project. Section 3 gives an insight into the existent approaches in implementing data classifiers used in industry and academia. Section 4 is devoted to the description of a project implementing two classifiers in a functional style. Section 5 contains the evaluation of the developed implementation and its comparison with the other existent software packages. In Section 6 the findings and conclusions are placed.
 
 \section{Description of the implemented algorithms}
 
-To reach the goals set for this project, it was decided to implement two well-known classification algorithms, namely naive Bayes (NB) and k-nearest neighbors (KNN). Both of these algorithms are relatively simple and are often used in different domains for the text classification, pattern recognition and other tasks. However, these classifiers have different properties. While NB algorithm is characterized as having low variance and high bias, KNN algorithm has high variance and low bias. From this it follows that NB should perform better for smaller data sets and KNN should be better for the large ones. Apart from this difference, there are some others that will not be covered in this document as it does not have a goal to compare the classifiers themselves. 
+To reach the goals set for this project, it was decided to implement two well-known classification algorithms, namely naive Bayes (NB) and k-nearest neighbors (KNN). Both of these algorithms are relatively simple and are often used in different domains for the text classification, pattern recognition and other tasks. However, these classifiers have different properties. While NB algorithm is characterized as having low variance and high bias, KNN algorithm has high variance and low bias. From this it follows that NB should perform better for smaller data sets and KNN should be better for the large ones. Also, it is needed from the data set to have instances distributed in correspondence with any of the known density functions, i.e. normal distribution density function for NB classifier to show good results. For KNN classifier this restriction does not hold. Apart from these differences, there are some others that will not be covered in this document as it does not have a goal to compare the classifiers themselves. 
 
 \subsection{Naive Bayes classifier}
 
@@ -44,13 +44,15 @@ The implementation of a naive Bayes classifier usually consists of training and 
 
 K-nearest neighbors classifier (KNN) belongs to the set of kernel estimation algorithms and approaches the classification problem by locating the instances that are closest to the instance to be classified in a feature space\footnote{N-dimensional metric space for the instances having N features}\cite{WikiKNN}.
 
-The algorithm idea is the following. Assume we have a set of classified instances defined by their feature vectors and located in the feature space. To classify an instance in the same space, we should find K of its nearest neighbors using the distance function and choose the most frequent class of these neighbors. The selection process is usually performed using the majority voting.
+The algorithm idea is the following. Assume we have a set of classified instances defined by their feature vectors and located in the feature space. To classify an instance in the same space, we should find K of its nearest neighbors using the distance function and choose the most frequent class of these neighbors using majority voting.
 
 The idea to classify the instances based on the similarity with the instances lying in the close proximity in the feature space is significantly different from the classification based on Bayes probability model discussed earlier. For example, there is no explicit training stage in KNN algorithm. It is only required to store the feature vectors and the respective class labels in the memory before initiating the classification process.
 
-Despite this algorithm seems to be rather straightforward and easy to implement, many researchers work on improving its properties for better performance on different data sets. The error rate of the algorithm depends significantly on the selection of distance and voting functions and many different implementation of them were designed by now.
+Despite this algorithm seems to be rather straightforward and easy to implement, it leaves much room for improvement and many researchers work on adjusting its properties for better performance on different data sets. The error rate of the algorithm depends significantly from K value and selection of distance function. Many different distance functions are designed and described in scientific literature.
 
-For this project, Euclidean distance was used as distance function. However, one important adjustment was made to it to address the co-existence of continuous and discrete features in some datasets.  
+For this project, Euclidean distance was used as distance function. However, one important adjustment was made to the data sets prior to submitting them to the classifier to let the distance function in KNN classifier and probability formulas in NB classifier to work correctly. To address the co-existence of continuous and discrete features in some datasets they had to be normalized.  
+
+\subsection{Normalization}
 
 Feature vectors in some datasets used to test the correctness of the algorithm shared both continuous (numerical) and discrete (categorical) features and there was a need in the distance function that would give adequate results for these mixed setups. To solve this problem, both continuous and discrete values were normalized prior to the classification. For continuous values, z-score normalization was applied. For different discrete values, 1 was taken as the distance value. For same discrete values, 0 was taken.
 
@@ -58,10 +60,49 @@ This normalization showed rather good results as can be seen in the evaluation s
 
 \section{Existent approaches to building the classifiers}
 
-Since the classification topic is important for many real-world tasks, there are many software packages that provide their customers a number of implementations for the classification algorithms. As the logic behind many of the classifiers is rather simple, implementations of most of such algorithms exist for virtually every programming language used in production. Classification algorithms are studied in academia and often used as the lab assignments. The popularity of these algorithms implies that there 
+%TBD
+
+Since the classification topic is important for many real-world tasks, there are many software packages that provide their customers a number of implementations for the classification algorithms. As the logic behind many of the classifiers is rather simple, implementations of most of such algorithms exist for virtually every programming language used in production. Classification algorithms are studied in academia and often used as the lab assignments. The popularity of these algorithms implies that there \ldots
 
 \section{Architecture and implementation}
 
+The application structure consists of the main program responsible for I/O and normalization, a class container and classifiers. 
+
+Internally, all the instances are represented simply as lists of their features. This makes it possible to perform operations on them in a functional way.
+
+\subsection{Main program}
+
+The discussed project was implemented as a command-line application reading data from files and reporting to the output stream. Main program accepts a number of parameters allowing to adjust certain application properties. It is located in \texttt{machine\_learning.py} file.
+
+The only positional argument accepted by the main program is the name of the dataset. Application parser was written to support the data sets from UCI Machine Learning Repository\footnote{\url{http://archive.ics.uci.edu/ml/}}. To work with any of the data sets from this repository, it has to be downloaded and placed into its own directory within \texttt{data\_sets} directory in the project root. When the main program is launched, it accepts \texttt{.data} file from the named directory as the training set. If the program also finds a \texttt{.test} file in the same directory, it is accepted as the testing set. Otherwise, the testing set is generated as a subset of the training set.
+
+Main program assumes NB being a default classifier. To choose KNN classifier, it has to be called with \texttt{-c knn} argument. \texttt{-k <value>} argument is used to set K value for this classifier. \texttt{-p <percent>} specifies a percentage of values to be moved to the testing set from the training set if \texttt{.test} file is not found.
+
+\subsection{Class container}
+
+The program has two supplementary classes, namely \texttt{Clazz} and \texttt{Feature} that are placed in \texttt{classes.py} file. These classes were written to support data normalization and probability calculations in for naive Bayes classifier. These classes are not used in the implementation of KNN classifier.
+
+\texttt{Clazz} class is a container for the instances from a training set belonging to one certain category (or class, or outcome). It holds the statistics, namely number of instances belonging to it and number of matches during the classification and a list of \texttt{Feature} objects containing data of the matched instances. Also, it is responsible for providing NB classifier with the probability that the instance being classified belongs to this class.
+
+\texttt{Feature} class contains a list of values for a given feature for all the instances. Thus, each \texttt{Clazz} object has a list of \texttt{Feature} objects with their number equal the number of features in the given data set. Also, \texttt{Feature} class has a number of mathematical functions operating on the list of values, like \texttt{mean()}, \texttt{standard\_deviation()} and \texttt{variance()}. The other methods in this class analyze the list of features to contain only continuous values and calculate prior probability for NB classifier. The prior probabilities are used by \texttt{Clazz} class to calculate class probabilities.
+
+For normalization purposes, main program has an instance of \texttt{Clazz} class where all the instances from the training set are stored. NB classifier has as many \texttt{Clazz} instances as the number of outcomes in the training set.
+
+The existence of these supplementary classes generally violates the principles of functional programming. It was decided to introduce them due to the need to save the state between the certain stages of program execution. First of all, for normalization there was a need to save all the instance in a data structure. Secondly, there was a need to gather statistics, i.e. number of hits during the classification. Despite it was possible to implement this functionality using only the sequences and functions on them, that would significantly complicate the structure of the code.
+
+The classifiers described below are also organized as classes though in this situation their structure is mostly dictated by the need to separate their functionality and let the main program to call them interchangeably, not by the need to use object-oriented programming techniques. Classifier classes can easily be rewritten as standard Python modules containing only function calls.
+
+\subsection{Naive Bayes classifier}
+
+The most challenging part of NB classifier, namely probability calculations, is implemented in the class container. The classifier itself is a vary simple class gathering classification statistics and holding a list of \texttt{Clazz} objects. After its initialization, the main program analyzes the outcomes that exist in the training set and calls \texttt{add\_class(name)} method to add a new instance of \texttt{Clazz} class to the classifier.
+
+The training process is implemented in \texttt{train(instance)} method. The classifier adds the instance to one of its classes based on the known instance outcome.
+
+Classification logic is implemented in \texttt{classify(instance)} method. For all of the outcomes the classifier calculates their class probability and decides on the highest probability. Then the result is compared with the real outcome of the instance and if they match, the classifier increments hits number.
+
+\subsection{K-nearest neighbors classifier}
+
+\subsection{Functional programming techniques used}
 
 \section{Evaluation}
 

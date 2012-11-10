@@ -2,7 +2,7 @@ import math
 
 SAMPLE_CORRECTION = 1.0e-20
 
-class feature:
+class Feature:
     """Contains a list of values for a certain feature and performs math operations on it"""
 
     def __init__(self):
@@ -86,7 +86,7 @@ class feature:
             return (1/math.sqrt(2*math.pi*variance*variance))*math.exp(-math.pow((instance-self.mean())/variance,2)/2)
 
 
-class clazz:
+class Clazz:
     """An outcome container to keep track of the instances belonging to this certain category"""
 
     def __init__(self, num_features, value):
@@ -94,7 +94,7 @@ class clazz:
         self.num_matches = 0
         self.features = list()
         self.value = value
-        [self.features.append(feature()) for _ in range(0,num_features)]
+        [self.features.append(Feature()) for _ in range(0,num_features)]
 
 
     def add_match(self, instances):
@@ -122,12 +122,6 @@ class clazz:
         return self.likelihood_probability() * reduce(lambda x,y: x * y,
             [feature.prior_probability(instances[index],self.num_matches)
                 for index,feature in enumerate(self.features)])
-
-
-class neighbor:
-    def __init__(self):
-        self.distance = 0
-        self.instance = list()
 
 
 

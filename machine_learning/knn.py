@@ -1,6 +1,5 @@
 import math
 import sys
-import classes
 import utils
 
 DELTA = 0.000001
@@ -48,7 +47,7 @@ class knn:
 
     def max_neighbor_distance(self):
         """Return distance to the farthest neighbor within K nearest neighbors"""
-        return max([n.distance for n in self.neighbors]) if self.neighbors else sys.maxint
+        return max([n['distance'] for n in self.neighbors]) if self.neighbors else sys.maxint
 
 
     def add_neighbor(self, neighbor):
@@ -58,7 +57,7 @@ class knn:
         else:
             index = 0
             for i,n in enumerate(self.neighbors):
-                if self.max_neighbor_distance() - n.distance < DELTA:
+                if self.max_neighbor_distance() - n['distance'] < DELTA:
                     index = i
             self.neighbors[index] = neighbor
 
@@ -70,17 +69,17 @@ class knn:
         for cur_inst in self.instances:
             distance = self.euclidean_distance(cur_inst, instance)
             if len(self.neighbors) < self.k or distance < self.max_neighbor_distance():
-                new_neighbor = classes.neighbor()
-                new_neighbor.distance = distance
-                new_neighbor.instance = cur_inst
+                new_neighbor = dict()
+                new_neighbor['distance'] = distance
+                new_neighbor['instance'] = cur_inst
                 self.add_neighbor(new_neighbor)
 
         distribution = dict()
         for neighbor in self.neighbors:
-            if not neighbor.instance[-1] in distribution:
-                distribution[neighbor.instance[-1]] = 1
+            if not neighbor['instance'][-1] in distribution:
+                distribution[neighbor['instance'][-1]] = 1
             else:
-                distribution[neighbor.instance[-1]] += 1
+                distribution[neighbor['instance'][-1]] += 1
 
         max = 0
         value = ''
