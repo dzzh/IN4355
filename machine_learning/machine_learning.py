@@ -137,7 +137,7 @@ if __name__ == '__main__':
     else:
          raise RuntimeError
 
-    #Normalize continuous features
+    #Precompute data for normalization
     statistics = Clazz(len(training_set[0])-1,'training_set')
     [statistics.add_match(instance) for instance in training_set]
 

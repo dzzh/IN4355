@@ -33,15 +33,13 @@ Faculty of Electronic Engineering, Mathematics and Computer Science \\
 
 \maketitle
 
-%-About the reports: you are expected to write around 10 pages, but not focus on quantity; instead focus on quality. A good report should explain the application domain, the existing approaches to building similar applications, a decomposition of the approach you have taken (e.g. high level architecture, design), the implementation with a focus on the functional programming techniques you have used and finally an evaluation of your approach. The deadline for the reports is Fri Nov 9.
-
 \begin{abstract}
 This report describes the project completed by the author during IN4355 Functional Programming course at TU Delft. The project goal was to implement two classification algorithms in a functional style using Python programming language.
 \end{abstract}
 
 \section{Introduction}
 
-The research topic of the project discussed in this report is application of the functional programming techniques to the classification algorithms. The classification problem is one of the well-known statistical challenges and is being studied for several decades already. In statistical studies, classification means identifying a subset of categories from a category set to which a certain instance belongs. Classification is usually based on the existent training set with a number of instances already associated with the categories from a category set. Correlation between the instances and categories is defined by analyzing the quantifiable properties (features) of the subject instances\cite{WikiStatClass}.
+The research topic of the project discussed in this report is application of functional programming techniques to the classification algorithms. The classification problem is one of the well-known statistical challenges and is being studied for several decades already. In statistical studies, classification means identifying a subset of categories from a category set to which a certain instance belongs. Classification is usually based on the existent training set with a number of instances already associated with the categories from a category set. Correlation between the instances and categories is defined by analyzing the quantifiable properties (features) of the subject instances\cite{WikiStatClass}.
 
 Many different classification algorithms exist with each of them having different properties. These algorithms can themselves be classified to a number of categories, such as linear classifiers, decision trees, neural networks and more. In the scope of this project we will discuss the implementation of a naive Bayes classifier which is a rather simple representative of the linear classifiers and k-nearest neighbors algorithm belonging to the kernel estimation classifiers.
 
@@ -53,17 +51,17 @@ The rest of this paper is organized as follows. In Section 2 we discuss the algo
 
 \section{Description of the implemented algorithms}
 
-To reach the goals set for this project, it was decided to implement two well-known classification algorithms, namely naive Bayes (NB) and k-nearest neighbors (KNN). Both of these algorithms are relatively simple and are often used in different domains for the text classification, pattern recognition and other tasks. However, these classifiers have different properties. While NB algorithm is characterized as having low variance and high bias, KNN algorithm has high variance and low bias. From this it follows that NB should perform better for smaller data sets and KNN should be better for the large ones. Also, it is needed from the data set to have instances distributed in correspondence with any of the known density functions, i.e. normal distribution density function for NB classifier to show good results. For KNN classifier this restriction does not hold. Apart from these differences, there are some others that will not be covered in this document as it does not have a goal to compare the classifiers themselves. 
+To reach the goals set for this project, it was decided to implement two well-known classification algorithms, namely naive Bayes (NB) and k-nearest neighbors (KNN). Both of these algorithms are relatively simple and are often used in different domains for the text classification, pattern recognition and other tasks. However, these classifiers have different properties. While NB algorithm is characterized as having low variance and high bias, KNN algorithm has high variance and low bias. From this it follows that NB should perform better for smaller data sets and KNN should be better for the large ones. Also, it is needed from the data set to have instances distributed in correspondence with any of the known density functions, i.e. normal distribution density function for NB classifier to show good results. NB classifier also requires feature independence from the data set. For KNN classifier these restrictions do not hold. Apart from these differences, there are some others that will not be covered in this document as it does not have a goal to compare the classifiers themselves. 
 
 \subsection{Naive Bayes classifier}
 
-Naive Bayes is considered to be the simplest classification algorithm possible. However, it has good execution speed and adequate error rate for many classification tasks. As its name implies, this classifier is based on the naive Bayes probabilistic model which assumes that the instance properties (features) are independent given class, that is, \(P(X|C) = \prod_{i=1}^nP(X_i|C)\). \cite{Rish}.
+Naive Bayes is considered to be the simplest classification algorithm possible. However, it has good execution speed and adequate error rate for many classification tasks. As its name implies, this classifier is based on the naive Bayes probabilistic model which assumes that the instance properties (features) are independent given class, that is, \(P(X|C) = \prod_{i=1}^nP(X_i|C)\) \cite{Rish}.
 
-The implementation of a naive Bayes classifier usually consists of training and classifying stages. At the first stage, the instances from a training set are split into the classes. For these instances we know explicitly to which class each instance belongs. At the second stage, we take the features of the instance to be classified and find the probabilities of it belonging to all of the classes in order. The highest value of these probabilities is defined by the formula \(argmax(P(C)) * \prod_{i=1}^nP(X_i|C)\) and the instance is classified as belonging to the category having this highest probability value \cite{Manning}\cite{Rish}.
+The implementation of a classifier usually consists of training and classifying stages. For NB classifier, at the first stage the instances from a training set are split into the classes. For these instances we know explicitly to which class each instance belongs. At the second stage, we take the features of the instance from a testing set and find the probabilities of it belonging to all of the classes in order. The highest value of these probabilities is defined by the formula \(argmax(P(C)) * \prod_{i=1}^nP(X_i|C)\) and the instance is classified as belonging to the category having this highest probability value \cite{Manning}\cite{Rish}.
 
 \subsection{K-nearest neighbors classifier}
 
-K-nearest neighbors classifier (KNN) belongs to the set of kernel estimation algorithms and approaches the classification problem by locating the instances that are closest to the instance to be classified in a feature space\footnote{N-dimensional metric space for the instances having N features}\cite{WikiKNN}.
+K-nearest neighbors classifier belongs to the set of kernel estimation algorithms and approaches the classification problem by locating the instances that are closest to the instance to be classified in a feature space\footnote{N-dimensional metric space for the instances having N features}\cite{WikiKNN}.
 
 The algorithm idea is the following. Assume we have a set of classified instances defined by their feature vectors and located in the feature space. To classify an instance in the same space, we should find K of its nearest neighbors using the distance function and choose the most frequent class of these neighbors using majority voting.
 
@@ -81,31 +79,29 @@ This normalization showed rather good results as can be seen in the evaluation s
 
 \section{Existent approaches to building the classifiers}
 
-%TBD
+Since the classification topic is important for many real-world tasks, there are many software packages that provide their customers a number of implementations for the classification algorithms. As the logic behind many of the classifiers is rather simple, implementations of most of such algorithms exist for virtually every programming language used in production. Classification algorithms are studied in academia and often used as the lab assignments. Their implementations exist both in general mathematical and statistical packages (SPSS, R, Mathematica, SAS, Statistica etc.) and as specialized classification software, proprietary and open-source (BayesiaLabs\footnote{\url{http://bayesia.com}}, BAYDA\cite{Kontkanen}, GPU-FS-kNN\cite{Arefin} etc.). Most of these implementations are written using general-purpose iterative programming languages like Java or C/C++. However, there are the implementations of naive Bayes and k-nearest neighbors algorithms in functional programming languages. Thus, Andrew Bienert discusses an implementation of binary NB classifier in F\# in \cite{Bienert}. Aleksovski et al. in \cite{Aleksovski} discuss an implementation of KNN classifier in Haskell. 
 
-Since the classification topic is important for many real-world tasks, there are many software packages that provide their customers a number of implementations for the classification algorithms. As the logic behind many of the classifiers is rather simple, implementations of most of such algorithms exist for virtually every programming language used in production. Classification algorithms are studied in academia and often used as the lab assignments. The popularity of these algorithms implies that there \ldots
+\section{Application structure and implementation}
 
-\section{Architecture and implementation}
-
-The application structure consists of the main program responsible for I/O and normalization, a class container and classifiers code. 
+The discussed project was implemented as a command-line application reading data from files and reporting to the output stream. The application structure consists of the main program responsible for I/O and normalization, a class container and classifiers code. 
 
 Internally, all the instances are represented simply as lists of their features. This makes it possible to perform operations on them in a functional way.
 
 \subsection{Main program}
 
-The discussed project was implemented as a command-line application reading data from files and reporting to the output stream. Main program accepts a number of parameters allowing to adjust certain application properties. It is located in \lstinline{machine_learning.py} file.
+Main program accepts a number of parameters allowing to adjust certain application properties. It is located in \lstinline{machine_learning.py} file.
 
 The only positional argument accepted by the main program is the name of the dataset. Application parser was written to support the data sets from UCI Machine Learning Repository\footnote{\url{http://archive.ics.uci.edu/ml/}}. To work with any of the data sets from this repository, it has to be downloaded and placed into its own directory within \lstinline{data_sets} directory in the project root. When the main program is launched, it accepts \lstinline{.data} file from the named directory as the training set. If the program also finds a \lstinline{.test} file in the same directory, it is accepted as the testing set. Otherwise, the testing set is generated as a subset of the training set.
 
-Main program assumes NB being a default classifier. To choose KNN classifier, it has to be called with \lstinline{-c knn} argument. \lstinline{-k <value>} argument is used to set K value for this classifier. \lstinline{-p <percent>} specifies a percentage of values to be moved to the testing set from the training set if \lstinline{.test} file is not found.
+Main program assumes NB being a default classifier. To choose KNN classifier, it has to be called with \lstinline{-c knn} argument. \lstinline{-k <value>} argument is used to set K value for this classifier. \lstinline{-p <percent>} specifies percentage of values to be moved to the testing set from the training set if \lstinline{.test} file is not found.
 
 \subsection{Class container}
 
 The program has two supplementary classes, namely \lstinline{Clazz} and \lstinline{Feature} that are placed in \lstinline{classes.py} file. These classes were written to support data normalization and probability calculations for naive Bayes classifier. These classes are not used in the implementation of KNN classifier.
 
-\lstinline{Clazz} class is a container for the instances from a training set belonging to one certain category (or class, or outcome). It holds the statistics, namely number of instances belonging to it and number of matches during the classification and a list of \lstinline{Feature} objects containing data of the matched instances. Also, it is responsible for providing NB classifier with the probability that the instance being classified belongs to this class.
+\lstinline{Clazz} class is a container for the instances from a training set belonging to one certain class (or category, or outcome). It keeps track of the outcome statistics, namely of the number of instances belonging to it and the number of matches during the classification, and a list of \lstinline{Feature} objects containing data of the matched instances. Also, it is responsible for providing NB classifier with the probability that the instance being classified belongs to this class.
 
-\lstinline{Feature} class contains a list of values for a given feature for all the instances. Thus, each \lstinline{Clazz} object has a list of \lstinline{Feature} objects with their number equal the number of features in the given data set. Also, \lstinline{Feature} class has a number of mathematical functions operating on the list of values, like \lstinline{mean()}, \lstinline{standard_deviation()} and \lstinline{variance()}. The other methods in this class analyze the list of features to contain only continuous values and calculate prior probability for NB classifier. The prior probabilities are used by \lstinline{Clazz} class to calculate class probabilities.
+\lstinline{Feature} class contains a list of values for a given feature for all the instances. Thus, each \lstinline{Clazz} object has a list of \lstinline{Feature} objects with their number equal the number of features in the given data set. Also, \lstinline{Feature} class has a number of mathematical functions operating on the list of values, like ~\lstinline{mean()}, \lstinline{standard_deviation()} and \lstinline{variance()}. The other methods in this class analyze the list of features to contain only continuous values and calculate prior probability for NB classifier. The prior probabilities are used by \lstinline{Clazz} class to calculate class probabilities.
 
 For normalization purposes, main program has an instance of \lstinline{Clazz} class where all the instances from the training set are stored. NB classifier has as many \lstinline{Clazz} instances as the number of outcomes in the training set.
 
@@ -133,11 +129,11 @@ After all the instances from the training set are processed, we use majority vot
 
 \subsection{Functional programming techniques used}
 
-While implementing the project, a lot of attention was paid to develop its architecture and write the code in concordance with the principles of functional programming. The application of these principles for Python programmers is discussed in \cite{Kuchling}\cite{Mertz}.
+While implementing the project, a lot of attention was paid to develop its architecture and write the code in concordance with the principles of functional programming. The application of these principles for Python programs is discussed in \cite{Kuchling}\cite{Mertz}.
 
 \subsubsection{Partial functions.}
 
-In Python, all the functions are the first-class objects, which allows to use them higher-order functions. One of the most used higher-order functions in Python is \lstinline{functools.partial()} that allows to construct variants of existing functions. In the discussed project, two partial functions were created from a general \lstinline{read_file()} function used in main program for file input. The implementation of the partial functions allowed to simplify their calls while reading training and testing sets from the different files. 
+In Python, all functions are first-class objects, which allows to use them as arguments for higher-order functions. One of the most used higher-order functions in Python is \lstinline{functools.partial()} that allows to construct variants of existing functions. In the discussed project, two partial functions were created from a general \lstinline{read_file()} function used in main program for file input. The implementation of the partial functions allowed to simplify their calls while reading training and testing sets from the different files. 
 
 \begin{lstlisting}[caption = Application of partial functions.]
 from functools import partial
@@ -150,12 +146,14 @@ if os.path.exists(file_prefix + '.test'):
 	testing_set = read_testing()
 \end{lstlisting}
 
+Another higher-order function that is often used in Python is ~\lstinline{start_new_thread()} used in multi-threaded programs. However, it has not been used in this project due to the lack of time. However, parallelizing the classification function can improve the program while running it at multi-core machines.
+
 \subsubsection{List slices and comprehensions.}
 
 Python provides rich functionality for operating with iterators and list comprehensions allow to perform different operations on iterable variables. Listing 1.2 shows the core logic of the program which is implemented in just four lines of code using the list comprehensions.
 
 \begin{lstlisting}[caption = Core logic of the application.]
-#Normalize training set
+#Precompute data for normalization
 statistics = Clazz(len(training_set[0])-1,'training_set')
 [statistics.add_match(instance) for instance in training_set]
 
@@ -177,9 +175,18 @@ if not os.path.exists(file_prefix + '.test'):
 
 \subsubsection{\lstinline{map(), filter(), reduce()} functions.}
 
-These built-in functions were often used by Python 1.x programmers to perform operations on iterable data. However, after introduction of list comprehensions in Python 2.0, the first two of these functions became somewhat obsolete as the comprehensions duplicate their functionality and have more concise syntax. Thus, \lstinline{map()} function was not used in this project, \lstinline{filter()}. \lstinline{reduce()} function was used more often to perform data aggregation over iterable variables. E.g., the following expression was used to compute mean for a list of feature values: \lstinline{reduce(lambda x,y: x + y, self.instances) / len(self.instances)}. 
+These built-in functions were often used by Python 1.x programmers to perform operations on iterable data. However, after introduction of list comprehensions in Python 2.0, the first two of these functions became somewhat obsolete as the comprehensions duplicate their functionality and have more concise syntax. Thus, \lstinline{map()} function was not used in this project, \lstinline{filter()} was used only once in prior probability computation for discrete features (see Listing 1.4) instead of a list comprehension with \lstinline{where} clause. 
 
-It is worth to notice that \lstinline{reduce()} function was not always working as expected and had to be substituted by the loops. For instance, this function was initially used to determine whether a list contains only float values: \lstinline{reduce(lambda x,y: type(x) is float and type(y) is float, self.instances)}. For some reason, this function was always returning \lstinline{False}. It was substituted by the following loop that works as expected.
+\begin{lstlisting}[caption = Usage of filter function.]
+if not self.is_continuous():
+   #straightforward computation for string values
+   return len(filter(lambda x: x == instance, self.instances)) \
+    	/ float(num_matches) + SAMPLE_CORRECTION
+\end{lstlisting}
+
+\lstinline{reduce()} function was used more often to perform data aggregation over iterables. E.g., the following expression was used to compute mean for a list of feature values: \lstinline{reduce(lambda x,y: x+y, self.instances) / len(self.instances)}. 
+
+It is worth to notice that \lstinline{reduce()} function was not always working as expected and had sometimes to be substituted by the loops. For instance, this function was initially used to determine whether a list contains only float values: \lstinline{reduce(lambda x,y: type(x)is float and type(y) is float,self.instances)}. For some reason, this function was always returning \lstinline{False}. It was substituted by the following loop that works as expected.
 
 \begin{lstlisting}[caption = A loop determining whether the list contains only floats.]
 for instance in self.instances:
@@ -208,7 +215,7 @@ The application performance was tested on three data sets from UCI repository. T
 \end{center}
 \end{table}
 
-For \emph{iris} and \emph{car} data sets the testing set was derived from the training set (percentage of data left for training is shown in column 3), for \emph{adult} data set there was a testing file available with 16281 instances. The testing results for these data sets can be found in Table 2. 
+The testing results for these data sets can be found in Table 2. For \emph{iris} and \emph{car} data sets the testing set was derived from the training set (percentage of data left for training is shown in column 3), for \emph{adult} data set there was a testing file available with 16281 instances.  
 
 \begin{table}
 \begin{center}
@@ -228,6 +235,7 @@ For \emph{iris} and \emph{car} data sets the testing set was derived from the tr
     car & KNN-3 & 90 & 3 sec & 6.9-13.3\% \\ \hline
     car & KNN-3 & 80 & 4 sec & 10.7-14.7\% \\ \hline
 	adult & NB & - & 93 min & 20.7\% \\ \hline
+	adult & KNN-1 & - & 149 min & 19.6\% \\ \hline
     adult & KNN-3 & - & 160 min & 16.9\% \\
     \hline
   \end{tabular}
@@ -235,15 +243,20 @@ For \emph{iris} and \emph{car} data sets the testing set was derived from the tr
 \end{center}
 \end{table}
 
-For \emph{iris} and \emph{car} data sets we have various error rates as the testing set is randomly generated from the training set. The difference in results is due to this randomness. For these data sets, all the calculations were done for five times and the maximum and minimum error rates observed were reported. For \emph{adult} data set (Census Bureau database), the testing set was the same. It was taken from the accompanying testing file.
+For \emph{iris} and \emph{car} data sets we have various error rates as the testing set is randomly generated from the training set. The difference in results is due to this randomness. For these data sets, all the calculations were done for five times and the maximum and minimum error rates observed are reported in the paper. For \emph{adult} data set (which is a well-known Census Bureau data set), the testing set was always same as it was taken from the accompanying testing file.
 
-The testing results show that the algorithms were implemented correctly. KNN-1 classifier (KNN with K=1) has the worst results and KNN-3 (KNN with K=3) has the best results as its results do not depend on the data distribution pattern as requested for correct NB operations. NB results lie in between. The error rate for both classifiers can be decreased if applying the normalization procedure as described in \cite{Suarez}. The reference implementation of NB classifier gives 16.1\% error rate, KNN-1 gives 21.4\%, KNN-3 gives 20.4\%. The results with 80\% of instances in the training set are worse than with 90\% of instances as the classifiers work better with more training data available.
-
-
+The testing results show that the algorithms were implemented correctly. KNN-1 classifier (KNN with K=1) has the worst results and KNN-3 (KNN with K=3) has the best results as its results do not depend on the data distribution pattern and feature independence as requested for correct NB operations. NB results lie in between. The error rate for both classifiers can be decreased if applying the normalization procedure as described in \cite{Suarez}. The reference implementation\footnote{The reference performance of different classifiers for Census Bureau data set is available with the data at UCI website.} of NB classifier gives 16.1\% error rate, KNN-1 gives 21.4\%, KNN-3 gives 20.4\%. The results with 80\% of instances in the training set are worse than with 90\% of instances as the classifiers work better with more training data available.
 
 \section{Conclusion}
 
+Python programming language provides good support of functional programming techniques and it is possible to implement rather large programs in this particular style with Python. In comparison with purely functional languages, i.e. Haskell, Python has an advantage that it allows to write the programs in different styles, e.g. mix object-oriented, procedural and functional programming approaches in a single program. If using this language feature with a good understanding of the benefits of each programming style, it may help the developers to write clean and understandable code, and do it fast. A disadvantage of doing functional programming in Python is that some of its language instruments to support functional approach have difficult syntax and the expressions written with them are not easy to understand afterwards, if comparing with Python iterative programming constructs.
+
 \begin{thebibliography}{99}
+\bibitem{Aleksovski} D. Aleksovski, M. Erwig, and S. Dzeroski. A functional programming approach to distance-based machine learning. In \emph{Conference on Data Mining and Data Warehouses (SiKDD 2008)}. Jozef Stefan Institute, 2008.
+\bibitem{Arefin} A.S. Arefin, C. Riveros, R. Berretta, P. Moscato. GPU-FS-kNN: A Software Tool for Fast and Scalable kNN Computation Using GPUs. In \emph{PLoS ONE 7(8)}: e44000. doi:10.1371/journal.pone.0044000, 2012.
+\bibitem{Bienert} A. Bienert. An implementation of a Binary Bayes Classifier in F\#. \url{http://andrewbienert.blogspot.nl/2011/05/implementation-of-binary-bayes.html}.
+\bibitem{Kontkanen}P. Kontkanen, P. Myllymaki, T. Silander and H. Tirri. BAYDA: Software for Bayesian Classification and Feature Selection. In \emph{Proc. of the 4th
+Int'l Conf. on Knowledge Discovery and Data Mining}, 1998.
 \bibitem{Kuchling} A. M. Kuchling. Python 2.7.3 documentation - Functional Programming HOWTO. \url{http://docs.python.org/2/howto/functional.html}
 \bibitem{Manning} C.D. Manning, P. Raghavan and H. Schutze. Introduction to information retrieval.  Cambridge University Press, 2008. 
 \bibitem{Mertz} D.Mertz. Charming Python: Functional programming in Python. \url{http://www.ibm.com/developerworks/linux/library/l-prog/index.html}
